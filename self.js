@@ -14,7 +14,7 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./selfbot.sqlite');
 
 bot.on('ready', () => {
-	log(`Selfbot Rewrite: Ready to spy on ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
+  log(`Selfbot Rewrite: Ready to spy on ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
   console.log("=> Ready");
 });
 
@@ -27,48 +27,48 @@ bot.on('message', msg => {
 
   // check if the message is just "/something", check database for "slash" command.
   if(msg.content.split(" ").length === 1) {
-  	db.get(`SELECT * FROM shortcuts WHERE name = ?`, [msg.content.slice(1)], (err, row) => {
-  	  if(err) console.error(err);
-  	  if(!row) return;
-  	  msg.edit(row.contents);
-  	  db.run(`UPDATE shortcuts SET used = used+1 WHERE name = '${msg.content.slice(1)}'`);
-  	});
+    db.get(`SELECT * FROM shortcuts WHERE name = ?`, [msg.content.slice(1)], (err, row) => {
+      if(err) console.error(err);
+      if(!row) return;
+      msg.edit(row.contents);
+      db.run(`UPDATE shortcuts SET used = used+1 WHERE name = '${msg.content.slice(1)}'`);
+    });
   }
-	
-	// get command name
-	var command = msg.content.split(" ")[0].slice(config.prefix.length);
-	// get command parameters for all the other commands.
+  
+  // get command name
+  var command = msg.content.split(" ")[0].slice(config.prefix.length);
+  // get command parameters for all the other commands.
   var params = msg.content.split(" ").slice(1);
   
-	if(command === "tag") {
-	   db.serialize(function() {
-	    db.get(`SELECT * FROM tags WHERE name = '${params[0]}'`, (err, row) => {
+  if(command === "tag") {
+     db.serialize(function() {
+      db.get(`SELECT * FROM tags WHERE name = '${params[0]}'`, (err, row) => {
         if(err) {log(err)}
-	      if(row) {
+        if(row) {
           let message_content = msg.mentions.users.array().length === 1 ? `${msg.mentions.users.array()[0]} ${row.contents}` : row.contents;
-	        setTimeout( () => {
-  	        msg.edit(message_content);
-	        }, 20);
+          setTimeout( () => {
+            msg.edit(message_content);
+          }, 20);
           db.run(`UPDATE tags SET used = used+1 WHERE name = '${params[0]}'`);
          }
-	       else msg.edit(`You dumbass, that tag doesn't exist. Go back to school!`).then(setTimeout(msg.delete.bind(msg), 1000));
-	     });
-	   });
-	} else
-	
-	if(command === "findemote") {
-	  let emoji_name = params[0];
-	  let emoji = bot.emojis.find("name", "emoji_name");
-	  if(emoji && emoji.id) {
-	    msg.edit(`The emoji **${emoji_name}** is apparently in: \`${emoji.guild.name}\``);
-	  } else {
-	    msg.edit(`Emoji named **${emoji_name}** wasn't found in my list.`);
-	  }
-	} else
-	
-	if(command === "addtag") {
-	  let name = params[0];
-	  let contents = params.slice(1).join(" ");
+         else msg.edit(`You dumbass, that tag doesn't exist. Go back to school!`).then(setTimeout(msg.delete.bind(msg), 1000));
+       });
+     });
+  } else
+  
+  if(command === "findemote") {
+    let emoji_name = params[0];
+    let emoji = bot.emojis.find("name", "emoji_name");
+    if(emoji && emoji.id) {
+      msg.edit(`The emoji **${emoji_name}** is apparently in: \`${emoji.guild.name}\``);
+    } else {
+      msg.edit(`Emoji named **${emoji_name}** wasn't found in my list.`);
+    }
+  } else
+  
+  if(command === "addtag") {
+    let name = params[0];
+    let contents = params.slice(1).join(" ");
     db.serialize(function() {
       
       db.get(`SELECT * FROM tags WHERE name = '${params[0]}'`, (err, row) => {
@@ -85,7 +85,7 @@ bot.on('message', msg => {
       
     });
 
-	} else
+  } else
 
   if(command === "addslash") {
     let name = params[0];
@@ -110,7 +110,7 @@ bot.on('message', msg => {
   } else
   
   if(command === "slashes") {
-	  db.serialize(function() {
+    db.serialize(function() {
       db.all(`SELECT * FROM shortcuts`, (err, rows) => {
         if(err) {log(err)};
         let message = [];
@@ -127,27 +127,27 @@ bot.on('message', msg => {
       });
     });
   } else
-	
-	if(command === "tags") {
-	  db.serialize(function() {
+  
+  if(command === "tags") {
+    db.serialize(function() {
       db.all("SELECT * FROM tags", (err, rows) => {
         if(err) {log(err)}
         msg.edit(`List of tags: ${rows.map(r => `${r.name} (${r.used})`).join(" ; ")}`);
       });
-	  });
-	} else
-	
-	if(command === "deltag") {
-	  db.serialize(function() {
-	    db.run(`DELETE FROM tags WHERE name = '${params[0]}'`, (err) => {
+    });
+  } else
+  
+  if(command === "deltag") {
+    db.serialize(function() {
+      db.run(`DELETE FROM tags WHERE name = '${params[0]}'`, (err) => {
         if(err) {log(err)}
         msg.edit(`The tag ${params[0]} has been deleted`).then(setTimeout(msg.delete.bind(msg), 1000));
-	    });
+      });
     });
-	} else 
-	
-	if(command === "prune") {
-	  let messagecount = parseInt(params[0]) ? parseInt(params[0]) : 1;
+  } else 
+  
+  if(command === "prune") {
+    let messagecount = parseInt(params[0]) ? parseInt(params[0]) : 1;
     msg.channel.fetchMessages({limit: 100})
     .then(messages => {
       let msg_array = messages.array();
@@ -155,25 +155,25 @@ bot.on('message', msg => {
       msg_array.length = messagecount + 1;
       msg_array.map(m => m.delete().catch(console.error));
      });
-	} else 
-	
-	if(command === "purge") {
-	  let messagecount = parseInt(params[0]);
-	  msg.channel.fetchMessages({limit: messagecount})
-	  .then(messages => {
+  } else 
+  
+  if(command === "purge") {
+    let messagecount = parseInt(params[0]);
+    msg.channel.fetchMessages({limit: messagecount})
+    .then(messages => {
       messages.map(m => m.delete().catch(console.error) );
-	  }).catch(console.error);
-	} else 
-	
-	// manually ban user by ip in the current server. testing/emergency purposes!
-	if(command === "idban") {
-	  let ban_id = params[0];
-	  let days = params[1];
-	  msg.guild.ban(ban_id, days)
-	   .then( () => console.log(`Banned ${ban_id} and removed ${days} days of messages`))
-	   .catch(console.error);
-	  //199591377032445953 (logandark)
-	}
+    }).catch(console.error);
+  } else 
+  
+  // manually ban user by ip in the current server. testing/emergency purposes!
+  if(command === "idban") {
+    let ban_id = params[0];
+    let days = params[1];
+    msg.guild.ban(ban_id, days)
+     .then( () => console.log(`Banned ${ban_id} and removed ${days} days of messages`))
+     .catch(console.error);
+    //199591377032445953 (logandark)
+  }
 
   if(command === "ping") {
     var startTime = now();
@@ -198,7 +198,7 @@ bot.on('message', msg => {
     msg.delete().catch(console.error);
   } else
   
-	if(command === "eval") {
+  if(command === "eval") {
     var code = msg.content.split(" ").slice(1).join(" ");
 
     try {
@@ -215,7 +215,7 @@ bot.on('message', msg => {
         clean(err) +
         "\n```");
     }
-	}
+  }
 })
 
 bot.login(config.botToken);
