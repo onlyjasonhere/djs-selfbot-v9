@@ -1,0 +1,17 @@
+{
+  "name": "roots-selfbot",
+  "version": "1.0.0",
+  "description": "A selfbot written in Discord.js v9",
+  "main": "self.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "github:hydrabolt/discord.js#indev",
+    "moment": "^2.14.1",
+    "performance-now": ">=0.2.0"
+  },
+  "devDependencies": {}
+}
