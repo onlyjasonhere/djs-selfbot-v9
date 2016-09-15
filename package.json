@@ -11,7 +11,8 @@
   "dependencies": {
     "discord.js": "github:hydrabolt/discord.js#indev",
     "moment": "^2.14.1",
-    "performance-now": ">=0.2.0"
+    "performance-now": ">=0.2.0",
+    "sqlite": "^2.2.0"
   },
   "devDependencies": {}
 }
